@@ -1,10 +1,10 @@
-name: Frontend CD
+name: Frontend Continuous Deployment
 on:
   workflow_dispatch:
   push:
     branches:
       - main
-
+      
 jobs:
   Linting:
     runs-on: ubuntu-latest
@@ -71,7 +71,6 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-session-token: ${{secrets.AWS_SESSION_TOKEN}}
         aws-region: us-east-1
   
 
@@ -86,14 +85,15 @@ jobs:
       env:
         IMAGE_TAG: latest
         REPO_NAME: frontend
+        REACT_APP_MOVIE_API_URL: http://localhost:5000
       run: |
-        docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag 669172573612.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
-        docker push 669172573612.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG
+        docker build --build-arg=REACT_APP_MOVIE_API_URL=${REACT_APP_MOVIE_API_URL} --tag 731168833491.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
+        docker push 731168833491.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG
     
 
     - name: Configure Kubeconfig
       run:
-       aws eks update-kubeconfig --name udacity-project4 --region us-east-1
+       aws eks update-kubeconfig --name cluster --region us-east-1
 
 
     - name: Deploy Docker Image to Amazon EKS
@@ -102,5 +102,5 @@ jobs:
         IMAGE_TAG: latest
         REPO_NAME: frontend
       run: |
-          kustomize edit set image frontend=669172573612.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG
+          kustomize edit set image frontend=731168833491.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG
           kustomize build | kubectl apply -f -
