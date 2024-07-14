@@ -86,11 +86,9 @@ jobs:
       env:
         IMAGE_TAG: latest
         REPO_NAME: frontend
-      run: |
-        aws eks update-kubeconfig --name cluster
-        export EXTERNALIP=$(kubectl get service backend -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
-        echo $EXTERNALIP     
-        docker build --build-arg=REACT_APP_MOVIE_API_URL=http://$EXTERNALIP --tag 731168833491.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
+        REACT_APP_MOVIE_API_URL: a7d2709d5125847078766f185b0ccf39-1527966180.us-east-1.elb.amazonaws.com
+      run: |   
+        docker build --build-arg=REACT_APP_MOVIE_API_URL=$REACT_APP_MOVIE_API_URL --tag 731168833491.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
         docker push 731168833491.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG
     
 
