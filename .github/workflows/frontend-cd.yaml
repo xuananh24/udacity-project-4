@@ -1,4 +1,5 @@
 name: Frontend Continuous Deployment
+
 on:
   workflow_dispatch:
   push:
