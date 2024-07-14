@@ -88,7 +88,7 @@ jobs:
         REPO_NAME: frontend
       run: |
         aws eks update-kubeconfig --name cluster
-        export EXTERNALIP=$(kubectl get svc backend -o=jsonpath='{.status.loadBalancer.ingress[0].hostname}{"\n"}{.status.loadBalancer.ingress[0].ip}')
+        export EXTERNALIP=$(kubectl get service backend -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
         echo $EXTERNALIP     
         docker build --build-arg=REACT_APP_MOVIE_API_URL=http://$EXTERNALIP --tag 731168833491.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
         docker push 731168833491.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG
